@@ -1,21 +1,24 @@
-#!/usr/bin/env python
+from __future__ import print_function
 
-import collections
-import mimetypes
-import gzip
 import bz2
-import json
-import tarfile
-import subprocess
-import re
-import os
-import tempfile
-import StringIO
-import hashlib
-import time
+import collections
 import datetime
 import email
+import gzip
+import hashlib
+try:
+    import lzma
+except ImportError:
+    from backports import lzma
+import mimetypes
+import os
+import re
+import StringIO
+import subprocess
 import sys
+import tempfile
+import time
+
 
 def file_checksum(file_name, checksum_type):
     h = hashlib.new(checksum_type)
@@ -43,6 +46,12 @@ def gzip_string(data):
 def bz2_string(data):
     buf = bytearray(data, 'utf-8')
     return bz2.compress(buf)
+
+
+def lzma_string(data):
+    lzma_compressor = lzma.LZMACompressor()
+    buf = bytearray(data, 'utf-8')
+    return lzma_compressor.compress(buf)
 
 
 def gpg_sign_string(data, keyname=None, inline=False):
@@ -324,11 +333,11 @@ def update_repo(storage, sign, tempdir):
         mtime = storage.mtime(file_path)
         if file_path in mtimes:
             if str(mtime) == str(mtimes[file_path]):
-                print "Skipping: '%s'" % file_path
+                print("Skipping: '%s'" % file_path)
                 continue
-            print "Updating: '%s'" % file_path
+            print("Updating: '%s'" % file_path)
         else:
-            print "Adding: '%s'" % file_path
+            print("Adding: '%s'" % file_path)
 
         storage.download_file(file_path, os.path.join(tmpdir, 'package.deb'))
 
@@ -376,9 +385,13 @@ def update_repo(storage, sign, tempdir):
         pkg_file_bz2_path = '%s/%s/Packages.bz2' % (component, subdir)
         pkg_file_bz2 = bz2_string(pkg_file)
 
+        pkg_file_xz_path = '%s/%s/Packages.xz' % (component, subdir)
+        pkg_file_xz = lzma_string(pkg_file)
+
         storage.write_file(prefix + pkg_file_path, pkg_file)
         storage.write_file(prefix + pkg_file_gzip_path, pkg_file_gzip)
         storage.write_file(prefix + pkg_file_bz2_path, pkg_file_bz2)
+        storage.write_file(prefix + pkg_file_xz_path, pkg_file_xz)
 
         for path in [pkg_file_path, pkg_file_gzip_path, pkg_file_bz2_path]:
             data = storage.read_file(prefix + path)

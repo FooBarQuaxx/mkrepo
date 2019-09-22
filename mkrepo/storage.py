@@ -1,15 +1,14 @@
-#!/usr/bin/env python
-
-import os
 import errno
+import os
 import shutil
-import urllib
-import boto3
 import StringIO
 import time
+import urllib
+
+import boto3
 
 
-class Storage:
+class Storage(object):
 
     def __init__(self):
         pass

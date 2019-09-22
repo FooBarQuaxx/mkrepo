@@ -1,15 +1,18 @@
 FROM centos:7
 
-RUN set -x  \
-    && yum -y install \
-       epel-release \
-    && yum -y install \
-       createrepo \
-       python-pip
+SHELL ["/bin/bash", "-x", "-c"]
 
-RUN set -x \
-    && pip install \
-       boto3
+RUN yum -y install \
+           epel-release \
+ && yum -y install \
+           createrepo \
+           python-pip \
+ && yum clean all
 
+RUN pip install -U pip setuptools 
 
-COPY *.py /mkrepo/
+ADD . /usr/src/mkrepo
+
+RUN pip install /usr/src/mkrepo
+
+RUN rm -rf /usr/src/mkrepo

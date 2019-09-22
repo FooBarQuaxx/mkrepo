@@ -1,10 +1,11 @@
-#!/usr/bin/env python
+from __future__ import print_function
 
 import argparse
-import storage
-import debrepo
-import rpmrepo
 import os
+
+from mkrepo import debrepo
+from mkrepo import rpmrepo
+from mkrepo import storage
 
 
 def is_deb_repo(stor):
@@ -50,13 +51,13 @@ def update_repo(path, args):
         stor = storage.FilesystemStorage(path)
 
     if is_deb_repo(stor):
-        print "Updating deb repository: %s" % path
+        print("Updating deb repository: %s" % path)
         debrepo.update_repo(stor, args.sign, args.temp_dir)
     elif is_rpm_repo(stor):
-        print "Updating rpm repository: %s" % path
+        print("Updating rpm repository: %s" % path)
         rpmrepo.update_repo(stor, args.sign, args.temp_dir)
     else:
-        print "Unknown repository: %s" % path
+        print("Unknown repository: %s" % path)
 
 
 def main():

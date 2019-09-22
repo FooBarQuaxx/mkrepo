@@ -1,0 +1,15 @@
+FROM python:2.7.15
+
+SHELL ["/bin/bash", "-x", "-c"]
+
+RUN apt-get update \
+ && apt-get install --no-install-recommends -y createrepo liblzma-dev \
+ && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
+RUN pip install -U pip setuptools 
+
+ADD . /usr/src/mkrepo
+
+RUN pip install /usr/src/mkrepo
+
+RUN rm -rf /usr/src/mkrepo

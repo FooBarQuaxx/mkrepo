@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 
+import gzip
+import hashlib
 import os
-import sys
 import re
-
-import subprocess
-import tempfile
+import rpmfile
 import shutil
 import storage
-import gzip
 import StringIO
-import rpmfile
-import hashlib
-import json
-import itertools
+import subprocess
+import sys
+import tempfile
 
 import datetime
 import time
@@ -86,9 +83,9 @@ def sign_metadata(repomdfile):
     cmd = ["gpg", "--detach-sign", "--armor", "--digest-algo SHA256", repomdfile]
     try:
         subprocess.check_call(cmd)
-        print ("Successfully signed repository metadata file")
-    except subprocess.CalledProcessError as e:
-        print ("Unable to sign repository metadata '%s'" % (repomdfile))
+        print("Successfully signed repository metadata file")
+    except subprocess.CalledProcessError:
+        print("Unable to sign repository metadata '%s'" % (repomdfile))
         exit(1)
 
 

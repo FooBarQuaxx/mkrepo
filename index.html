@@ -84,7 +84,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Works on Linux and OS X. Should also work on BSD and Windows, but I haven't checked.</p>
 <h2 id="quickstart">Quickstart</h2>
 <p>Create an s3 bucket named e.g. <code>builds</code> and put a sample package <code>package.rpm</code> to <code>s3://builds/rpmrepo/Packages</code>. Then do the following:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">./mkrepo.py</span> s3://builds/rpmrepo</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./mkrepo.py</span> s3://builds/rpmrepo</code></pre></div>
 <p>After this, you will find all metadata generated in <code>s3://builds/rpmrepo/repodata</code></p>
 <h2 id="dependencies">Dependencies</h2>
 <p>Python libraries:</p>
@@ -93,15 +93,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <h2 id="command-line-reference">Command-line reference</h2>
 <p><code>mkrepo</code> parses your <code>~/.aws/config</code> and reads secret key and region settings. So you may skip them in command line invocation in case you have aws config.</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">mkrepo.py</span> [-h] 
-
-          [<span class="kw">--temp-dir</span> TEMP_DIR]
-          [<span class="kw">--s3-access-key-id</span> S3_ACCESS_KEY_ID]
-          [<span class="kw">--s3-secret-access-key</span> S3_SECRET_ACCESS_KEY]
-          [<span class="kw">--s3-endpoint</span> S3_ENDPOINT]
-          [<span class="kw">--s3-region</span> S3_REGION]
-          [<span class="kw">--sign</span>]
-          <span class="kw">path</span> [path ...]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="ex">mkrepo.py</span> [-h] 
+            [<span class="ex">--temp-dir</span> TEMP_DIR]
+            [<span class="ex">--s3-access-key-id</span> S3_ACCESS_KEY_ID]
+            [<span class="ex">--s3-secret-access-key</span> S3_SECRET_ACCESS_KEY]
+            [<span class="ex">--s3-endpoint</span> S3_ENDPOINT]
+            [<span class="ex">--s3-region</span> S3_REGION]
+            [<span class="ex">--sign</span>]
+            <span class="ex">path</span> [path ...]</code></pre></div>
 <ul>
 <li><code>--temp-dir</code> - /(optional)/directory used to store temporary artifacts (default is .mkrepo)</li>
 <li><code>--s3-access-key-id</code> - /(optional)/ specify S3 access key ID</li>
