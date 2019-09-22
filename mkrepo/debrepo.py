@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-import bz2
 import collections
 import datetime
 import email
@@ -41,11 +40,6 @@ def gzip_string(data):
     with gzip.GzipFile(fileobj=out, mode="w") as fobj:
         fobj.write(data)
     return out.getvalue()
-
-
-def bz2_string(data):
-    buf = bytearray(data, 'utf-8')
-    return bz2.compress(buf)
 
 
 def lzma_string(data):
@@ -254,17 +248,16 @@ def split_pkg_path(pkg_path):
     # We assume that DEB file format is the following, with optional <revision>, <dist> and <arch>
     # <package>_<version>.<revision>-<dist>_<arch>.deb
 
-    expr = r'^(?P<package>[^_]+)_(?P<version>[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+)(\.(?P<revision>[^\-]+))?([\-]?(?P<dist>[^_]+))?_(?P<arch>[^\.]+)\.deb$'
+    # expr = r'^(?P<package>[^_]+)_(?P<version>[0-9]+\.[0-9]+\.[0-9]+\-[0-9]+)(\.(?P<revision>[^\-]+))?([\-]?(?P<dist>[^_]+))?_(?P<arch>[^\.]+)\.deb$'
+    expr = r'^(?P<package>[^_]+)_(?P<version>[^_]+)_(?P<arch>[^\.]+)\.deb$'
     match = re.match(expr, pkg_path)
 
     if not match:
         return None
 
     component = 'main'
+    dist = 'all'
 
-    dist = match.group('dist')
-    if dist is None:
-        dist = 'all'
     arch = match.group('arch')
     if arch is None:
         arch = 'all'
@@ -382,18 +375,14 @@ def update_repo(storage, sign, tempdir):
         pkg_file_gzip_path = '%s/%s/Packages.gz' % (component, subdir)
         pkg_file_gzip = gzip_string(pkg_file)
 
-        pkg_file_bz2_path = '%s/%s/Packages.bz2' % (component, subdir)
-        pkg_file_bz2 = bz2_string(pkg_file)
-
         pkg_file_xz_path = '%s/%s/Packages.xz' % (component, subdir)
         pkg_file_xz = lzma_string(pkg_file)
 
         storage.write_file(prefix + pkg_file_path, pkg_file)
         storage.write_file(prefix + pkg_file_gzip_path, pkg_file_gzip)
-        storage.write_file(prefix + pkg_file_bz2_path, pkg_file_bz2)
         storage.write_file(prefix + pkg_file_xz_path, pkg_file_xz)
 
-        for path in [pkg_file_path, pkg_file_gzip_path, pkg_file_bz2_path]:
+        for path in [pkg_file_path, pkg_file_gzip_path, pkg_file_xz_path]:
             data = storage.read_file(prefix + path)
             sizes[dist][path] = len(data)
 

@@ -9,7 +9,7 @@ RUN yum -y install \
            python-pip \
  && yum clean all
 
-RUN pip install -U pip setuptools 
+RUN pip install -U pip setuptools
 
 ADD . /usr/src/mkrepo
 

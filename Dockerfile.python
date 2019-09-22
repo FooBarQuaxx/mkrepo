@@ -6,7 +6,7 @@ RUN apt-get update \
  && apt-get install --no-install-recommends -y createrepo liblzma-dev \
  && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
-RUN pip install -U pip setuptools 
+RUN pip install -U pip setuptools
 
 ADD . /usr/src/mkrepo
 
