@@ -37,6 +37,14 @@ class Storage(object):
     def files(self, subdir=None):
         raise NotImplementedError()
 
+    @property
+    def is_deb(self):
+        return any(self.files("pool/"))
+
+    @property
+    def is_rpm(self):
+        return any(self.files("Packages/"))
+
 
 def _mkdir_recursive(path):
     try:

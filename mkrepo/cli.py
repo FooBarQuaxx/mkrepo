@@ -5,30 +5,13 @@ import os
 
 from mkrepo import debrepo
 from mkrepo import rpmrepo
-from mkrepo import storage
-
-
-def is_deb_repo(stor):
-    result = False
-    for _ in stor.files("pool/"):
-        result = True
-        break
-
-    return result
-
-
-def is_rpm_repo(stor):
-    result = False
-    for _ in stor.files("Packages/"):
-        result = True
-        break
-
-    return result
+from mkrepo.storage import (
+    S3Storage,
+    FilesystemStorage,
+)
 
 
 def update_repo(path, args):
-    stor = None
-
     if not os.path.exists(args.temp_dir):
         os.mkdir(args.temp_dir)
 
@@ -40,22 +23,22 @@ def update_repo(path, args):
         else:
             bucket, prefix = path, '.'
 
-        stor = storage.S3Storage(args.s3_endpoint,
-                                 bucket,
-                                 prefix,
-                                 args.s3_access_key_id,
-                                 args.s3_secret_access_key,
-                                 args.s3_region)
+        storage = S3Storage(args.s3_endpoint,
+                            bucket,
+                            prefix,
+                            args.s3_access_key_id,
+                            args.s3_secret_access_key,
+                            args.s3_region)
 
     else:
-        stor = storage.FilesystemStorage(path)
+        storage = FilesystemStorage(path)
 
-    if is_deb_repo(stor):
+    if storage.is_deb:
         print("Updating deb repository: %s" % path)
-        debrepo.update_repo(stor, args.sign, args.temp_dir)
-    elif is_rpm_repo(stor):
+        debrepo.update_repo(storage, args.sign, args.temp_dir)
+    elif storage.is_rpm:
         print("Updating rpm repository: %s" % path)
-        rpmrepo.update_repo(stor, args.sign, args.temp_dir)
+        rpmrepo.update_repo(storage, args.sign, args.temp_dir)
     else:
         print("Unknown repository: %s" % path)
 
