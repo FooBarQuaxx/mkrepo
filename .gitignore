@@ -73,4 +73,10 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Generated index.html docs
 index.html
+
+# tags file
+tags
+
